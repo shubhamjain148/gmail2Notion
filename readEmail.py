@@ -2,7 +2,6 @@ from addToNotion import postToNotion
 from simplegmail import Gmail
 from html_sanitizer import Sanitizer
 from html.parser import HTMLParser
-import pprint
 
 mappings = {
     "p": "paragraph",
@@ -21,6 +20,13 @@ annotationMapping = {
     "code": "code"
 }
 
+labelMappings = {
+    "Readings/James Clear": "James Clear",
+    "Readings/George Mack": "George Mack"
+}
+
+name = "Readings/James Clear"
+
 
 children = []
 
@@ -37,7 +43,7 @@ def findOpenBaseTag(openTags):
             return tag
     return None
 
-# TODO: Solve for tag inside tag
+# TODO: Improve the parsing algo
 class MyHTMLParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
@@ -98,9 +104,6 @@ class MyHTMLParser(HTMLParser):
             self.currentChildOfBlock = {}
         if (tag in mappings or tag== "br"):
             type = mappings[tag]
-            if(tag == "li"):
-                print(tag)
-                print(self.openTags)
             if(tag == "li" and len(self.openTags) > 1 and self.openTags[len(self.openTags) - 2] == "ol"):
                 type = "numbered_list_item"
             self.currentBlock = {
@@ -140,53 +143,25 @@ gmail = Gmail()
 
 # Unread messages in inbox with label "Work"
 labels = gmail.list_labels()
-# print(labels)
-work_label = list(filter(lambda x: x.name == 'Readings/James Clear', labels))[0]
 
-messages = gmail.get_messages(labels=[work_label])
-# print("To: " + messages[0].recipient)
-# print("From: " + messages[0].sender)
-# print("Subject: " + messages[0].subject)
-# print("Date: " + messages[0].date)
-# print("Preview: " + messages[0].snippet)
-# markdown = html2markdown.convert(messages[0].html)
+for labelName, name in labelMappings.items():
+    print('Processing label {}'.format(labelName))
+    work_label = list(filter(lambda x: x.name == labelName, labels))[0]
+    messages = gmail.get_unread_messages(labels=[work_label])
+    sanitizer = Sanitizer({"tags": {
+            "a", "h1", "h2", "h3", "strong", "em", "p", "ul", "ol",
+            "li", "br", "hr", "div", 'u', 'code', 'br'
+        },})
 
+    print('Found {} unread emails for label {}'.format(len(messages), labelName))
 
-# {
-#   'tags': ('h1', 'h2', 'h3', 'p', 'ul', 'li', 'ol', 'a', 'strong', 'em', 'li', 'br'),
-#   'attributes': {"a": ("href", "name", "target", "title", "id", "rel")},
-#   "whitespace": {"br"},
-#   'empty': set(),
-#   'separate': set(),
-#   "element_preprocessors": [
-#         # convert span elements into em/strong if a matching style rule
-#         # has been found. strong has precedence, strong & em at the same
-#         # time is not supported
-#         bold_span_to_strong,
-#         italic_span_to_em,
-#         tag_replacer("b", "strong"),
-#         tag_replacer("i", "em"),
-#         tag_replacer("form", "p"),
-#         target_blank_noopener,
-#     ]
-# }
+    for message in messages:
+        print(message.label_ids)
+        htmlMessage = message.html
+        sanitizeHtmlMessage = sanitizer.sanitize(htmlMessage)
+        children = []
+        parser.feed(sanitizeHtmlMessage.strip())
+        success = postToNotion(message.subject, name, children)
+        if(success):
+            message.mark_as_read()
 
-sanitizer = Sanitizer({"tags": {
-        "a", "h1", "h2", "h3", "strong", "em", "p", "ul", "ol",
-        "li", "br", "hr", "div", 'u', 'code', 'br'
-    },})
-
-
-
-# print(sanitizeHtmlMessage)
-
-# sanitizeHtmlMessage = '<h2><strong>How to Choose a Habit that Sticks</strong></h2> <p>The most important decision you will make is what habit to build. </p> <p>Pick the right habit and progress is easy. Pick the wrong habit and life is a struggle. It is much more important to work on the right habit than it is to work really hard. (Working hard is still important, of course.) </p> <p>In this lesson, we’re going to discuss how to choose the right habit for you.</p> <p>When most people think about the habits they want to build, they naturally start by considering the outcomes they want to achieve. "I want to lose weight." Or, "I want to stop smoking."</p> <p>The alternative is to build what I call “<strong>identity-based habits</strong>” and start by focusing on who we wish to become, not what we want to achieve. (This is an idea I unpack more fully in Chapter 2 of <a href="https://click.convertkit-mail4.com/75u08p78n3u2uz8x8ocz/25h2hoh70p82eks3/aHR0cHM6Ly9qYW1lc2NsZWFyLmNvbS9hdG9taWMtaGFiaXRz" rel="noopener noreferrer" target="_blank"><em>Atomic Habits</em></a>.)</p>'
-
-
-for message in messages:
-    htmlMessage = message.html
-    sanitizeHtmlMessage = sanitizer.sanitize(htmlMessage)
-    children = []
-    parser.feed(sanitizeHtmlMessage.strip())
-    postToNotion(message.subject, children, "7201475d4b6b494488cce0b9e249a788")
-# print(children)

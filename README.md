@@ -6,6 +6,12 @@
 
 Get your emails from gmail which have specific labels into notion and create a reading list out of your newsletter, subscriptions and other things.
 
+## Before using
+
+The project uses [simplegmail](https://github.com/jeremyephron/simplegmail) to connect to your gmail account.
+
+Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting-started) section of that repo to setup connection with gmail
+
 ## How to use
 
 - To get started, first create a filter for the emails which you want to move and add specific labels to emails in those filters

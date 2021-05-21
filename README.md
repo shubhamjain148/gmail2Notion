@@ -1,10 +1,12 @@
 <div align="center">
 
-## Port emails from gmail to Notion
+## 🚀 Port emails from gmail to Notion 🚀
 
 </div>
 
 Get your emails from gmail which have specific labels into notion and create a reading list out of your newsletters, subscriptions and other things.
+
+Clone this project to get started
 
 ## Before using
 
@@ -25,7 +27,9 @@ Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting
 
 ## How to use the script
 
-1. To get started, first create a filter for the emails which you want to move and add specific labels to emails in those filters
+1. To get started, choose a label from your gmail you want to move to notion,
+
+> **💡Pro Tip:** Create a filter for the emails which you want to move and add specific labels to emails in those filters. So going forward emails which come under the filter will automatically get labelled.
 
 2. Update `labelMappings.json` file to reflect your labels list as keys to that object and the value of the key will be with what name you want to store this into gmail.
 

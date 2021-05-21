@@ -1,0 +1,4 @@
+emoji==1.2.0
+html-sanitizer==1.9.1
+requests==2.25.1
+simplegmail==4.0.2

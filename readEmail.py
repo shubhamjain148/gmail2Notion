@@ -3,6 +3,7 @@ from simplegmail import Gmail
 from html_sanitizer import Sanitizer
 from html.parser import HTMLParser
 import emoji
+import json
 
 # TODO: add support for path params for database id and integration key
 mappings = {
@@ -24,10 +25,9 @@ annotationMapping = {
     "code": "code"
 }
 
-labelMappings = {
-    "Readings/James Clear": "James Clear",
-    "Readings/George Mack": "George Mack"
-}
+f = open('labelMappings.json')
+
+labelMappings = json.load(f)
 
 name = "Readings/James Clear"
 

@@ -10,7 +10,10 @@ Get your emails from gmail which have specific labels into notion and create a r
 
 The project uses [simplegmail](https://github.com/jeremyephron/simplegmail) to connect to your gmail account.
 
-Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting-started) section of that repo to setup connection with gmail
+Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting-started) section of that repo to setup connection with gmail.
+
+> **NOTE:** Make sure you create a Desktop Client for Google OAuth so you don't have to add
+> a redirect URL
 
 ## How to use
 
@@ -24,7 +27,6 @@ Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting
 
 [Follow these steps](https://developers.notion.com/docs) to get your database id and notion secret integration key
 
-Along with name column have another select column names as `from` where the value from labelMappings will be stored
-
+- Along with name column have another select column named as `From` which is of select type where the value from labelMappings will be stored, and prepopulate the values with all the values from your label mappings<!--Need To automate this-->
 - Add your databaseId in place of `defaultDatabaseId` in `addToNotion.py`
 - Add your secret integration key in place of `integrationKey` in `addToNotion.py`

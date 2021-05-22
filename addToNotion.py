@@ -3,12 +3,12 @@ import json
 import emoji
 
 
-def postToNotion(title, name, children, databaseId = "7201475d4b6b494488cce0b9e249a788"):
+def postToNotion(title, name, children, databaseId, integrationKey):
   url = "https://api.notion.com/v1/pages"
   headers = {
     'Content-Type': 'application/json',
     'Notion-Version': '2021-05-13',
-    'Authorization': 'Bearer secret_4rsw5maRnxEgmCAEZ5rJyRQJ4WGj0hr5bgZiXuYguB3'
+    'Authorization': 'Bearer {}'.format(integrationKey)
   }
   requestBody = {
     "parent": {

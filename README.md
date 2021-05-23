@@ -22,8 +22,6 @@ Follow the [getting started](https://github.com/jeremyephron/simplegmail#getting
 [Follow these steps](https://developers.notion.com/docs) to get your database id and notion secret integration key
 
 - Along with name column create another column named as `From` which is of select type and prepopulate it with some values which you want to store so that you know from whom the email is like `x`, `y` and `z`
-- Add your databaseId in place of `defaultDatabaseId` in `addToNotion.py`
-- Add your secret integration key in place of `integrationKey` in `addToNotion.py`
 
 ## How to use the script
 
@@ -44,4 +42,8 @@ So if your `labelMappings.json` file looks like this so the script will read all
 
 > **NOTES:** `x` and `y` are should be some prepopulated values in `From` select column as mentioned in [How to setup Notion section](#Setting-up-Notion-and-Secret)
 
-3.  run the script and your emails are in Notion
+3.  run the follwing command and your emails are in Notion
+
+```
+python3 notion2gmail.py <database-id> <notion-integration-key>
+```

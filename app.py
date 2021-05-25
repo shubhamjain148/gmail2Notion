@@ -1,4 +1,4 @@
-from googleApis import addMailToNotion, getAccessToken
+from googleApis import addMailToNotion, getToken
 from flask import Flask, jsonify
 from flask_restful import request
 from flask_cors import CORS
@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 env_config = os.getenv("APP_SETTINGS", "config.DevelopmentConfig")
 app.config.from_object(env_config)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 from models import User
 CORS(app)
@@ -25,9 +25,18 @@ def post_example():
     if(request.data): 
       data = request.get_json()
       print(data["code"])
-      response = getAccessToken(data["code"], gmail_client_id, gmail_client_secret)
-      print(response)
-      addMailToNotion(response, notion_key)
+      response = getToken(data["code"], gmail_client_id, gmail_client_secret)
+      print(response['refresh_token'])
+      try:
+        user = User(refresh_token = response['refresh_token'])
+        print('here 1')
+        db.session.add(user)
+        print('here 2')
+        db.session.commit()
+        print('here 3')
+      except:
+        print('something went wrong while adding to db')
+      # addMailToNotion(response, notion_key)
     return response
 
 

@@ -9,7 +9,7 @@ import base64
 from bs4 import BeautifulSoup
 from simplegmail.message import Message
 
-def getAccessToken(authCode, clientId, clientSecret):
+def getToken(authCode, clientId, clientSecret):
   url = "https://oauth2.googleapis.com/token"
 
   payload = json.dumps({
@@ -26,7 +26,7 @@ def getAccessToken(authCode, clientId, clientSecret):
   response = requests.request("POST", url, headers=headers, data=payload)
 
   print(response.text)
-  return response.json()['access_token']
+  return response.json()
 
 
 def getUserEmails(accessToken, labels = []):

@@ -1,26 +1,18 @@
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
-class Config(object):
-    DEBUG = False
-    TESTING = False
-    CSRF_ENABLED = True
-    SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
+class Config:
+    DEBUG = False
+    DEVELOPMENT = False
+    NOTION_SECRET_KEY = os.getenv("NOTION_SECRET_KEY", "this-is-the-default-key")
+    GMAIL_CLIENT_ID = os.getenv("GMAIL_CLIENT_ID", "random")
+    GMAIL_CLIENT_SECRET = os.getenv("GMAIL_CLIENT_SECRET", "random")
 
 class ProductionConfig(Config):
-    DEBUG = False
-
+    pass
 
 class StagingConfig(Config):
-    DEVELOPMENT = True
     DEBUG = True
-
 
 class DevelopmentConfig(Config):
-    DEVELOPMENT = True
     DEBUG = True
-
-
-class TestingConfig(Config):
-    TESTING = True
+    DEVELOPMENT = True

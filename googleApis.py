@@ -9,13 +9,13 @@ import base64
 from bs4 import BeautifulSoup
 from simplegmail.message import Message
 
-def getAccessToken(authCode):
+def getAccessToken(authCode, clientId, clientSecret):
   url = "https://oauth2.googleapis.com/token"
 
   payload = json.dumps({
     "code": authCode,
-    "client_id": "891866724637-ajjtrcs38vo42f3s5s6vqq3tmplnd9qu.apps.googleusercontent.com",
-    "client_secret": "Gu9-9xOCyTWXdhldOPYiyN65",
+    "client_id": clientId,
+    "client_secret": clientSecret,
     "redirect_uri": "http://localhost:3000",
     "grant_type": "authorization_code"
   })
@@ -108,7 +108,7 @@ def evaluate_message_payload(payload, msg_id):
 
   return []
 
-def addMailToNotion(accessToken):
+def addMailToNotion(accessToken, notion_key):
   message = getUserEmail(accessToken, None)
   # response = json.load(response)
   print(message['id'])
@@ -175,5 +175,5 @@ def addMailToNotion(accessToken):
   sanitizer = NotionSanitizer()
   sanitizedMessage = sanitizer.sanitizeString(new_message.html)
   notionBlocks = parseHtmlToNotion(sanitizedMessage)
-  success = postToNotion(new_message.subject, "James Clear", notionBlocks, "7201475d4b6b494488cce0b9e249a788", "secret_4rsw5maRnxEgmCAEZ5rJyRQJ4WGj0hr5bgZiXuYguB3")
+  success = postToNotion(new_message.subject, "James Clear", notionBlocks, "7201475d4b6b494488cce0b9e249a788", notion_key)
 

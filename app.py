@@ -1,11 +1,12 @@
 from googleApis import addMailToNotion, getAccessToken
-import json
 from flask import Flask, jsonify
 from flask_restful import request
 from flask_cors import CORS
-import ast
+import os
 
 app = Flask(__name__)
+env_config = os.getenv("APP_SETTINGS", "config.DevelopmentConfig")
+app.config.from_object(env_config)
 CORS(app)
 # api = Api(app)
 
@@ -14,12 +15,15 @@ def post_example():
     """POST in server"""
     response = jsonify(message="POST request returned")
     response.headers.add("Access-Control-Allow-Origin", "*")
+    notion_key = app.config.get("NOTION_SECRET_KEY")
+    gmail_client_id = app.config.get("GMAIL_CLIENT_ID")
+    gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
     if(request.data): 
       data = request.get_json()
       print(data["code"])
-      response = getAccessToken(data["code"])
+      response = getAccessToken(data["code"], gmail_client_id, gmail_client_secret)
       print(response)
-      addMailToNotion(response)
+      addMailToNotion(response, notion_key)
     return response
 
 

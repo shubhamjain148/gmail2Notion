@@ -2,6 +2,7 @@ from addToNotion import postToNotion
 import argparse
 from typing import List
 from simplegmail.label import Label
+import json
 
 from simplegmail.message import Message
 from convertHtmlToNotion import parseHtmlToNotion
@@ -24,7 +25,8 @@ parser.add_argument('key',
 
 args = parser.parse_args()
 
-labelMappings = getLabelMappings()
+labelFile = open('labelMappings.json')
+labelMappings = json.load(labelFile)
 gmail = GmailReader()
 sanitizer = NotionSanitizer()
 

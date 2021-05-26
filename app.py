@@ -12,6 +12,7 @@ config = {
   'ORIGINS': [
     'http://localhost:3000',  # React
     'http://127.0.0.1:3000',  # React
+    'https://gmail-to-notion-web.vercel.app',
   ],
 
   'SECRET_KEY': '...'

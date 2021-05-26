@@ -8,9 +8,12 @@ class Config:
     GMAIL_CLIENT_SECRET = os.getenv("GMAIL_CLIENT_SECRET", "random")
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
     REDIS_URL = os.environ.get('REDIS_URL')
-    SESSION_COOKIE_HTTPONLY = True if os.environ.get('HTTP_ONLY') == 'True' else False
+    SESSION_COOKIE_HTTPONLY = True
+    REDIRECT_URL = "http://localhost:3000"
 
 class ProductionConfig(Config):
+    REDIRECT_URL = "https://gmail-to-notion-web.vercel.app"
+    SESSION_COOKIE_HTTPONLY = False
     pass
 
 class StagingConfig(Config):

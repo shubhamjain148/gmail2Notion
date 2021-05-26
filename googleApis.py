@@ -9,14 +9,14 @@ import base64
 from bs4 import BeautifulSoup
 from simplegmail.message import Message
 
-def getToken(authCode, clientId, clientSecret):
+def getToken(authCode, clientId, clientSecret, redirect_uri):
   url = "https://oauth2.googleapis.com/token"
 
   payload = json.dumps({
     "code": authCode,
     "client_id": clientId,
     "client_secret": clientSecret,
-    "redirect_uri": "http://localhost:3000/loggedIn",
+    "redirect_uri": "{}/loggedIn".format(redirect_uri),
     "grant_type": "authorization_code"
   })
   headers = {

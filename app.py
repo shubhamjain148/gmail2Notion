@@ -45,9 +45,8 @@ def create():
     gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
     if(request.data): 
       data = request.get_json()
-      print(data["code"])
-      print(data)
-      response = getToken(data["code"], gmail_client_id, gmail_client_secret, app.config['REDIRECT_URI'])
+      print(app.config['REDIRECT_URL'])
+      response = getToken(data["code"], gmail_client_id, gmail_client_secret, app.config['REDIRECT_URL'])
       print(response['refresh_token'])
       user = User(response['refresh_token'], "", "", "")
       try:

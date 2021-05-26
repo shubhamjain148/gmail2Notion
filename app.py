@@ -1,5 +1,5 @@
 import flask
-from googleApis import addMailToNotion, getAccessFromRefresh, getToken
+from googleApis import addMailToNotion, getAccessFromRefresh, getToken, getUserEmails, getUserLabels
 from flask import Flask, jsonify, session
 from flask_session import Session
 from flask_restful import request
@@ -30,6 +30,7 @@ app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = False
 app.config['SESSION_COOKIE_SAMESITE'] = 'lax'
 app.config['SESSION_REDIS'] = redis.from_url(app.config['REDIS_URL'])
+print(app.config['SESSION_COOKIE_HTTPONLY'])
 db = SQLAlchemy(app)
 from models import User
 server_session = Session(app)
@@ -87,6 +88,7 @@ def update():
       print(data["database_id"])
       user.notion_integration_key = data['notion_key']
       user.database_id = data['database_id']
+      user.label = data['label']
       try:
         print('here 1')
         db.session.commit()
@@ -98,7 +100,7 @@ def update():
     # response.headers.add("Access-Control-Allow-Origin", "*")
     return user.to_dict()
 
-@app.route("/notion", methods=["GET"])
+@app.route("/notion", methods=["POST"])
 def post_to_notion():
     """POST in server"""
     user_id = session['id']
@@ -106,10 +108,18 @@ def post_to_notion():
     user = User.query.filter_by(id=user_id).first()
     gmail_client_id = app.config.get("GMAIL_CLIENT_ID")
     gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
-    # response = getAccessFromRefresh(user.refresh_token, gmail_client_id, gmail_client_secret)
+    response = getAccessFromRefresh(user.refresh_token, gmail_client_id, gmail_client_secret)
     # print(response)
-    # addMailToNotion(response['access_token'], user.notion_integration_key, user.database_id)
-    return str(user_id)
+    label_response = getUserLabels(response['access_token'])
+    print(label_response)
+    label_id = None
+    for label in label_response['labels']:
+      if label['name'] == user.label:
+        label_id = label['id']
+    emails = getUserEmails(response['access_token'], label_id)
+    print(emails)
+    addMailToNotion(response['access_token'], emails['messages'][0]['id'], user.notion_integration_key, user.database_id)
+    return emails['messages'][0]['id']
 
 
 # if __name__ == "__main__":

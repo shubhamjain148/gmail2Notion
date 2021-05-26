@@ -8,6 +8,7 @@ class Config:
     GMAIL_CLIENT_SECRET = os.getenv("GMAIL_CLIENT_SECRET", "random")
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
     REDIS_URL = os.environ.get('REDIS_URL')
+    SESSION_COOKIE_HTTPONLY = True if os.environ.get('HTTP_ONLY') == 'True' else False
 
 class ProductionConfig(Config):
     pass

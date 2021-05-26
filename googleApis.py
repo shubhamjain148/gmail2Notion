@@ -46,9 +46,17 @@ def getAccessFromRefresh(refresh_token, clientId, clientSecret):
   print(response.text)
   return response.json()
 
+def getUserLabels(access_token):
+  url = "https://gmail.googleapis.com/gmail/v1/users/me/labels"
+  headers = {
+    'Authorization': 'Bearer {}'.format(access_token)
+  }
+  response = requests.request("GET", url, headers=headers, data={})
+  print(response.text)
+  return response.json()
 
-def getUserEmails(accessToken, labels = []):
-  url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?labelIds=Label_5465479059402873463"
+def getUserEmails(accessToken, label):
+  url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?labelIds={}".format(label)
 
   payload={}
   headers = {
@@ -58,7 +66,7 @@ def getUserEmails(accessToken, labels = []):
   response = requests.request("GET", url, headers=headers, data=payload)
 
   print(response.text)
-  return response.text
+  return response.json()
 
 def getUserEmail(accessToken, messageId):
   url = "https://gmail.googleapis.com/gmail/v1/users/me/messages/{}".format(messageId)
@@ -126,8 +134,8 @@ def evaluate_message_payload(payload, msg_id):
 
   return []
 
-def addMailToNotion(accessToken, notion_key, database_id):
-  message = getUserEmail(accessToken, "17999d458efe362a")
+def addMailToNotion(accessToken, messageId, notion_key, database_id):
+  message = getUserEmail(accessToken, messageId)
   # response = json.load(response)
   print(message['id'])
   msg_id = message['id']

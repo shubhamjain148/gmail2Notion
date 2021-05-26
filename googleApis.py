@@ -16,7 +16,7 @@ def getToken(authCode, clientId, clientSecret):
     "code": authCode,
     "client_id": clientId,
     "client_secret": clientSecret,
-    "redirect_uri": "http://localhost:3000",
+    "redirect_uri": "http://localhost:3000/loggedIn",
     "grant_type": "authorization_code"
   })
   headers = {
@@ -61,7 +61,7 @@ def getUserEmails(accessToken, labels = []):
   return response.text
 
 def getUserEmail(accessToken, messageId):
-  url = "https://gmail.googleapis.com/gmail/v1/users/me/messages/17999d458efe362a"
+  url = "https://gmail.googleapis.com/gmail/v1/users/me/messages/{}".format(messageId)
 
   payload={}
   headers = {
@@ -126,8 +126,8 @@ def evaluate_message_payload(payload, msg_id):
 
   return []
 
-def addMailToNotion(accessToken, notion_key):
-  message = getUserEmail(accessToken, None)
+def addMailToNotion(accessToken, notion_key, database_id):
+  message = getUserEmail(accessToken, "17999d458efe362a")
   # response = json.load(response)
   print(message['id'])
   msg_id = message['id']
@@ -193,5 +193,6 @@ def addMailToNotion(accessToken, notion_key):
   sanitizer = NotionSanitizer()
   sanitizedMessage = sanitizer.sanitizeString(new_message.html)
   notionBlocks = parseHtmlToNotion(sanitizedMessage)
-  success = postToNotion(new_message.subject, "James Clear", notionBlocks, "7201475d4b6b494488cce0b9e249a788", notion_key)
+  success = postToNotion(new_message.subject, "James Clear", notionBlocks, database_id, notion_key)
+  return success
 

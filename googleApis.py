@@ -28,6 +28,24 @@ def getToken(authCode, clientId, clientSecret):
   print(response.text)
   return response.json()
 
+def getAccessFromRefresh(refresh_token, clientId, clientSecret):
+  url = "https://www.googleapis.com/oauth2/v4/token"
+
+  payload = json.dumps({
+    "client_id": clientId,
+    "client_secret": clientSecret,
+    "refresh_token": refresh_token,
+    "grant_type": "refresh_token"
+  })
+  headers = {
+    'Content-Type': 'application/json'
+  }
+
+  response = requests.request("POST", url, headers=headers, data=payload)
+
+  print(response.text)
+  return response.json()
+
 
 def getUserEmails(accessToken, labels = []):
   url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?labelIds=Label_5465479059402873463"

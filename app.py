@@ -1,4 +1,4 @@
-from googleApis import addMailToNotion, getToken
+from googleApis import addMailToNotion, getAccessFromRefresh, getToken
 from flask import Flask, jsonify
 from flask_restful import request
 from flask_cors import CORS
@@ -38,6 +38,18 @@ def post_example():
         print('something went wrong while adding to db')
       # addMailToNotion(response, notion_key)
     return response
+  
+@app.route("/notion", methods=["POST"])
+def post_to_notion():
+    """POST in server"""
+    user = User.query.filter_by(id=1).first()
+    notion_key = app.config.get("NOTION_SECRET_KEY")
+    gmail_client_id = app.config.get("GMAIL_CLIENT_ID")
+    gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
+    response = getAccessFromRefresh(user.refresh_token, gmail_client_id, gmail_client_secret)
+    print(response)
+    addMailToNotion(response['access_token'], notion_key)
+    return user
 
 
 # if __name__ == "__main__":

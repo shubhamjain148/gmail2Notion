@@ -29,7 +29,7 @@ app.config['SESSION_COOKIE_NAME'] = 'qid'
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = False
 app.config['SESSION_COOKIE_SAMESITE'] = 'lax'
-app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:6379')
+app.config['SESSION_REDIS'] = app.config['REDIS_URL']
 db = SQLAlchemy(app)
 from models import User
 server_session = Session(app)

@@ -10,10 +10,12 @@ class Config:
     REDIS_URL = os.environ.get('REDIS_URL')
     SESSION_COOKIE_HTTPONLY = True
     REDIRECT_URL = "http://localhost:3000"
+    SESSION_COOKIE_SECURE = False
 
 class ProductionConfig(Config):
     REDIRECT_URL = "https://gmail-notion-web.herokuapp.com"
     SESSION_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_SECURE = True
     pass
 
 class StagingConfig(Config):

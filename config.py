@@ -12,7 +12,7 @@ class Config:
     REDIRECT_URL = "http://localhost:3000"
 
 class ProductionConfig(Config):
-    REDIRECT_URL = "https://gmail-to-notion-web.vercel.app"
+    REDIRECT_URL = "https://gmail-notion-web.herokuapp.com"
     SESSION_COOKIE_HTTPONLY = False
     pass
 

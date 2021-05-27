@@ -29,7 +29,7 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_COOKIE_NAME'] = 'qid'
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = False
-app.config['SESSION_COOKIE_SAMESITE'] = 'lax'
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_REDIS'] = redis.from_url(app.config['REDIS_URL'])
 print(app.config['SESSION_COOKIE_HTTPONLY'])
 db = SQLAlchemy(app)

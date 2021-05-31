@@ -14,7 +14,7 @@ class Config:
 
 class ProductionConfig(Config):
     REDIRECT_URL = "https://gmail-notion-web.herokuapp.com"
-    SESSION_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = True
     pass
 

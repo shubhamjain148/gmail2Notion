@@ -14,8 +14,8 @@ config = {
     'http://127.0.0.1:3000',  # React
     'https://gmail-to-notion-web.vercel.app',
     'https://gmail-notion-web.herokuapp.com',
-    'http://www.getitonotion.com',
-    'http://getitonotion.com'
+    'https://www.getitonotion.com',
+    'https://getitonotion.com'
   ],
 
   'SECRET_KEY': '...'

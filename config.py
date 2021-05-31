@@ -13,7 +13,7 @@ class Config:
     SESSION_COOKIE_SECURE = False
 
 class ProductionConfig(Config):
-    REDIRECT_URL = "http://www.getitonotion.com"
+    REDIRECT_URL = "https://www.getitonotion.com"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = True
     pass

@@ -46,6 +46,15 @@ def getAccessFromRefresh(refresh_token, clientId, clientSecret):
   print(response.text)
   return response.json()
 
+def getProfile(access_token):
+  url = "https://gmail.googleapis.com/gmail/v1/users/me/profile"
+  headers = {
+    'Authorization': 'Bearer {}'.format(access_token)
+  }
+  response = requests.request("GET", url, headers=headers, data={})
+  print(response.text)
+  return response.json()
+
 def getUserLabels(access_token):
   url = "https://gmail.googleapis.com/gmail/v1/users/me/labels"
   headers = {

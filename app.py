@@ -1,5 +1,5 @@
 import flask
-from googleApis import addMailToNotion, getAccessFromRefresh, getToken, getUserEmails, getUserLabels
+from googleApis import addMailToNotion, getAccessFromRefresh, getProfile, getToken, getUserEmails, getUserLabels
 from flask import Flask, jsonify, session
 from flask_session import Session
 from flask_restful import request
@@ -50,21 +50,21 @@ def create():
       data = request.get_json()
       print(app.config['REDIRECT_URL'])
       response = getToken(data["code"], gmail_client_id, gmail_client_secret, app.config['REDIRECT_URL'])
-      print(response['refresh_token'])
-      user = User(response['refresh_token'], "", "", "")
-      try:
-        print('here 1')
-        db.session.add(user)
-        print('here 2')
-        db.session.commit()
-        print('here 3')
-      except:
-        print('something went wrong while adding to db')
-      # addMailToNotion(response, notion_key)
-    print('id of the user is {}'.format(user.id))
-    session['id'] = user.id
-    # response = jsonify(user.to_dict)
-    # response.headers.add("Access-Control-Allow-Origin", "*")
+      userProfile = getProfile(response['access_token'])
+      print(userProfile)
+      user: User = User.query.filter_by(email=userProfile['emailAddress']).first()
+      if user == None:
+        user = User(response['refresh_token'], "", "", "", userProfile['emailAddress'])
+        try:
+          print('here 1')
+          db.session.add(user)
+          print('here 2')
+          db.session.commit()
+          print('here 3')
+        except:
+          print('something went wrong while adding to db')
+      print('id of the user is {}'.format(user.id))
+      session['id'] = user.id
     return {"user": user.to_dict()}
 
 

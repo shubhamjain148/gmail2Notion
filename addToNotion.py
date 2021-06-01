@@ -13,6 +13,10 @@ def getNotionHeader(integration_key):
 def postToNotion(title, extraDetails, children, databaseId, integrationKey):
   url = "https://api.notion.com/v1/pages"
   headers = getNotionHeader(integrationKey)
+  for key in extraDetails:
+    if 'title' in extraDetails[key]:
+      extraDetails[key]['title'][0]['text']['content'] = title
+      break
   requestBody = {
     "parent": {
       "database_id": databaseId
@@ -20,6 +24,7 @@ def postToNotion(title, extraDetails, children, databaseId, integrationKey):
     "properties": extraDetails,
     "children": children
   }
+  
   print(extraDetails)
   response = requests.request("POST", url, headers=headers, data=emoji.emojize(json.dumps(requestBody)).encode('utf-8'))
   print(response.status_code)

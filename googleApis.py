@@ -25,7 +25,6 @@ def getToken(authCode, clientId, clientSecret, redirect_uri):
 
   response = requests.request("POST", url, headers=headers, data=payload)
 
-  print(response.text)
   return response.json()
 
 def getAccessFromRefresh(refresh_token, clientId, clientSecret):
@@ -43,7 +42,6 @@ def getAccessFromRefresh(refresh_token, clientId, clientSecret):
 
   response = requests.request("POST", url, headers=headers, data=payload)
 
-  print(response.text)
   return response.json()
 
 def getProfile(access_token):
@@ -52,7 +50,6 @@ def getProfile(access_token):
     'Authorization': 'Bearer {}'.format(access_token)
   }
   response = requests.request("GET", url, headers=headers, data={})
-  print(response.text)
   return response.json()
 
 def getUserLabels(access_token):
@@ -61,7 +58,6 @@ def getUserLabels(access_token):
     'Authorization': 'Bearer {}'.format(access_token)
   }
   response = requests.request("GET", url, headers=headers, data={})
-  print(response.text)
   return response.json()
 
 def getUserEmails(accessToken, label):
@@ -73,8 +69,6 @@ def getUserEmails(accessToken, label):
   }
 
   response = requests.request("GET", url, headers=headers, data=payload)
-
-  print(response.text)
   return response.json()
 
 def getUserEmail(accessToken, messageId):
@@ -143,10 +137,9 @@ def evaluate_message_payload(payload, msg_id):
 
   return []
 
-def addMailToNotion(accessToken, messageId, notion_key, database_id):
+def addMailToNotion(accessToken, messageId, notion_key, database_id, extra_details):
   message = getUserEmail(accessToken, messageId)
   # response = json.load(response)
-  print(message['id'])
   msg_id = message['id']
   thread_id = message['threadId']
   label_ids = []
@@ -205,11 +198,10 @@ def addMailToNotion(accessToken, messageId, notion_key, database_id):
   new_message = Message("googleapiclient.discovery.Resource", "me", msg_id, thread_id, recipient, 
                 sender, subject, date, snippet, plain_msg, html_msg, label_ids,
                 attms, msg_hdrs)
-  print(new_message)
   # print(new_message.html)
   sanitizer = NotionSanitizer()
   sanitizedMessage = sanitizer.sanitizeString(new_message.html)
   notionBlocks = parseHtmlToNotion(sanitizedMessage)
-  success = postToNotion(new_message.subject, "James Clear", notionBlocks, database_id, notion_key)
+  success = postToNotion(new_message.subject, extra_details, notionBlocks, database_id, notion_key)
   return success
 

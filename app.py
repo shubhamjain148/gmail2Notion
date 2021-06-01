@@ -1,8 +1,9 @@
+from addToNotion import getDatabaseDetails
 import flask
 from googleApis import addMailToNotion, getAccessFromRefresh, getProfile, getToken, getUserEmails, getUserLabels
 from flask import Flask, jsonify, session
 from flask_session import Session
-from flask_restful import request
+from flask_restful import abort, request
 from flask_cors import CORS
 import os
 from flask_sqlalchemy import SQLAlchemy
@@ -34,7 +35,6 @@ app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = False
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_REDIS'] = redis.from_url(app.config['REDIS_URL'])
-print(app.config['SESSION_COOKIE_HTTPONLY'])
 db = SQLAlchemy(app)
 from models import User
 server_session = Session(app)
@@ -48,22 +48,16 @@ def create():
     gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
     if(request.data): 
       data = request.get_json()
-      print(app.config['REDIRECT_URL'])
       response = getToken(data["code"], gmail_client_id, gmail_client_secret, app.config['REDIRECT_URL'])
       userProfile = getProfile(response['access_token'])
-      print(userProfile)
       user: User = User.query.filter_by(email=userProfile['emailAddress']).first()
       if user == None:
         user = User(response['refresh_token'], "", "", "", userProfile['emailAddress'])
         try:
-          print('here 1')
           db.session.add(user)
-          print('here 2')
           db.session.commit()
-          print('here 3')
         except:
           print('something went wrong while adding to db')
-      print('id of the user is {}'.format(user.id))
       session['id'] = user.id
     return {"user": user.to_dict()}
 
@@ -107,23 +101,34 @@ def update():
 def post_to_notion():
     """POST in server"""
     user_id = session['id']
-    print(user_id)
     user = User.query.filter_by(id=user_id).first()
     gmail_client_id = app.config.get("GMAIL_CLIENT_ID")
     gmail_client_secret = app.config.get("GMAIL_CLIENT_SECRET")
     response = getAccessFromRefresh(user.refresh_token, gmail_client_id, gmail_client_secret)
-    # print(response)
+    request_data = request.get_json()
     label_response = getUserLabels(response['access_token'])
-    print(label_response)
     label_id = None
     for label in label_response['labels']:
       if label['name'] == user.label:
         label_id = label['id']
     emails = getUserEmails(response['access_token'], label_id)
-    print(emails)
-    addMailToNotion(response['access_token'], emails['messages'][0]['id'], user.notion_integration_key, user.database_id)
+    addMailToNotion(response['access_token'], emails['messages'][0]['id'], user.notion_integration_key, user.database_id, request_data)
     return emails['messages'][0]['id']
-
+  
+@app.route("/notion/database", methods=["GET"])
+def get_notion_database():
+  if session.get('id'):
+    user_id = session['id']
+    user: User = User.query.filter_by(id=user_id).first()
+    notion_key = user.notion_integration_key
+    database_id = user.database_id
+    response = getDatabaseDetails(notion_key, database_id)
+    if response.status_code == 200:
+      return response.json()
+    else:
+      return abort(400, {'error': 'cannot excess database with the details you provided'})
+  else:
+    return abort(404, {'error': 'not logged in'})
 
 # if __name__ == "__main__":
 #     app.run(host="0.0.0.0", port="5000")
